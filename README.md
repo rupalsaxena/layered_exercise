@@ -13,11 +13,26 @@ At LAYERED, we are strong advocates for excellence in our work. To us, *excellen
 
 Instructions to run the package using ROS1:
 
-1.  Enable other processes to access the X11 server:  `xhost local:root` 
-2. Download and start the ROS noetic docker image: `docker run -it --rm  --env DISPLAY=$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:rw  osrf/ros:noetic-desktop-full` 
-3. Install required dependencies: `sudo apt update && sudo apt install git-all python3-catkin-tools -y` 
-4. Create a catkin workspace and build the exercise: `mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src && git clone [https://github.com/LAYERED-pierrechass/layered_exercise.git](https://github.com/LAYERED-pierrechass/layered_exercise.git) && cd .. && catkin build && source devel/setup.bash`
-5. Launch the exercise:  `roslaunch layered_exercise turtle.launch`
+1.  Enable other processes to access the X11 server: 
+    ```
+    xhost local:root
+    ``` 
+2. Download and start the ROS noetic docker image: 
+    ```
+    docker run -it --rm  --env DISPLAY=$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:rw  osrf/ros:noetic-desktop-full
+    ``` 
+3. Install required dependencies: 
+    ```
+    sudo apt update && sudo apt install git-all python3-catkin-tools -y
+    ```
+4. Create a catkin workspace and build the exercise: 
+    ```
+   mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src && git clone https://github.com/LAYERED-pierrechass/layered_exercise.git && cd .. && catkin build && source devel/setup.bash
+   ```
+5. Launch the exercise:  
+   ```
+   roslaunch layered_exercise turtle.launch
+   ```
 
 > **DISCLAIMER:** This exercise was developed and tested using Ubuntu 24.04.1. It is recommended to use the same OS to make sure everything runs smoothly. However, because it runs inside a docker you should be able to run it on any platform by slightly adapting some of the instructions above. You can also use a docker, a dual boot or a VM to run Ubuntu 24.04.1. 
 
