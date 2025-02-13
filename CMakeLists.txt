@@ -1,23 +1,39 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(layered_exercise)
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  turtlesim
-  geometry_msgs
-)
+# Find ROS2 dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(turtlesim REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
-catkin_package()
-
+# Include directories (ensure headers are found)
 include_directories(
   include
-  ${catkin_INCLUDE_DIRS}
+  ${rclcpp_INCLUDE_DIRS}
+  ${turtlesim_INCLUDE_DIRS}
+  ${geometry_msgs_INCLUDE_DIRS}
 )
 
-add_executable(${PROJECT_NAME}_node src/node.cpp)
-target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
+# Add executables
+add_executable(layered_exercise_node src/node.cpp)
+ament_target_dependencies(layered_exercise_node rclcpp turtlesim geometry_msgs)
 
+add_executable(kill_turtle_node src/kill_turtle.cpp)
+ament_target_dependencies(kill_turtle_node rclcpp turtlesim)
+
+add_executable(spawn_turtle_node src/spawn_turtle.cpp)
+ament_target_dependencies(spawn_turtle_node rclcpp turtlesim)
+
+# Install executables
+install(TARGETS layered_exercise_node kill_turtle_node spawn_turtle_node
+  DESTINATION lib/${PROJECT_NAME})
+
+# Install launch files
 install(
-  DIRECTORY launch 
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
 )
+
+# ament package (MUST be last)
+ament_package()
