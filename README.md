@@ -26,6 +26,12 @@ If you need help for anything or have any question, please feel free to contact 
 - Pierre: pchassagne@ethz.ch
 - Davide: dbarret@ethz.ch
 
+## Deadline
+If you are currently reading this it means that you have two days to complete the exercise and send us your submission.
+
+## Submission
+Once you are done, you can send us, in the format you want (zip, github repos, ...), all the documents necessary to run your exercise. Note that we are using Ubuntu 24.04 and you can assume that we don't have anything installed on our machine.
+
 # LAYERED Coding Conventions
 
 ## General
