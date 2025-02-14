@@ -42,6 +42,7 @@ private:
   void controlLoop() {
     if (point_index_ >= POINTS.size()) {
       RCLCPP_INFO(this->get_logger(), "All points reached. Stopping.");
+      rclcpp::shutdown();
       return;
     }
 

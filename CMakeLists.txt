@@ -16,7 +16,7 @@ include_directories(
 )
 
 # Add executables
-add_executable(layered_exercise_node src/move_turtle.cpp)
+add_executable(layered_exercise_node src/layered_exercise.cpp)
 ament_target_dependencies(layered_exercise_node rclcpp turtlesim geometry_msgs)
 
 add_executable(kill_turtle_node src/kill_turtle.cpp)
