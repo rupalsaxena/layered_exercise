@@ -1,14 +1,21 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>layered_exercise</name>
-  <version>0.0.0</version>
-  <description>The test package</description>
-  <maintainer email="layered@todo.todo">layered</maintainer>
+  <name>rosp_layered_exercise</name>
+  <version>0.0.1</version>
+  <description>Turtlesim Layered Package</description>
+  <maintainer email="rupal.saxena.rs@gmail.com">layered</maintainer>
   <license>Closed</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <build_depend>rclcpp</build_depend>
+  <build_depend>turtlesim</build_depend>
+  <build_depend>geometry_msgs</build_depend>
 
-  <depend>roscpp</depend>
-  <depend>turtlesim</depend>
-  <depend>geometry_msgs</depend>
+  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>turtlesim</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>

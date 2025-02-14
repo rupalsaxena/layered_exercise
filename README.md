@@ -1,82 +1,59 @@
-# LAYERED exercise
+# Turtle moved to ROS2
 
-You are an engineer at LAYERED, everyone is happy and the sun is shining, when suddenly Davide arrives at your desk. He is super excited and speaks loudly, he found a ROS package online and he guarantees you that it would be a super cool package to add to the current stack. Unfortunately, only a ROS1 version exists. He is currently working on a super urgent thing and he saw you playing chess at your desk so he was wondering if you could help him migrate this package from ROS1 to ROS2. He also tells you that he didn't have much time to look at the code in details so it might be badly written.
+Lemme pause my Chess game right there and move on to my newly assigned task i.e. migrating ROS1 package to ROS2 which Davide found and guarantees that it is super cool to add it in the current stack. 
 
-At LAYERED, we are strong advocates for excellence in our work. To us, *excellence* means:
+But before I start this migration, I need to make sure that this ROS1 package works on my machine. Once I made sure that this package works on my Macbook M1 chip, I moved on slowly to develop bit by bit to ROS2. There are couple of things which I needed to be sure about: package manifests, messages, services, building system, and finally updating source code. In terms of documentation, I referred to migration guide provided by ros to migrate from ROS1 to ROS2. I recommend using this documentation also for further migrations.
 
-- **Team-first mindset:** Work as a team for the team. Ensuring everything you do is understandable and align with team guidelines. Remember, major successes and failures are often the sum of many individual contributions.
-- **Work smart:** Always look for ways to simplify your work. Build efficient processes, automate repetitive tasks, and document best practices. Always balance effort and impact, ensuring your time is spent where it matters most.
-- **Continuous improvement:** Enhance what can be improved, document what should be improved. Always question existing processes, apply creativity and leadership to drive progress—while recognizing that everything can’t change at once. Meaningful change are the result of small incremental changes.
-- **Commitment to growth:** Always strive for your best, never settle for less, and seek guidance when needed. Have confidence in your abilities but stay humble enough to learn and improve.
+During this migration, following are some changes which I did:
+1. updating package.xml file to ros2 standards.
+2. updating CMakeLists.txt file to ros2 standards.
+3. Updating launch file from xml format to ROS2 python format.
+4. Finally updating node which I call layered_exercise node.
 
-## Launch Instructions
+During the migration, I faced several changes. Following are list of those:
+1. Visualizing ROS1 turtle with Macbook M1 chip looks quite straightforward but when it comes to visualizing with ROS2 based package, I faced some challenges. I spend quite some time on visualization of ROS2 package on my Macbook but nothing was succesful. Therefore, I switched to an Ubuntu based machine since Ubuntu is used by all Layered empolyees. On moving to Ubuntu, visualization worked immediately. HURRAYYY!
 
-Instructions to run the package using ROS1:
+2. Migration from rosservices to ROS2 services. On migrating from rosservices to ROS2 based services such as kill and spawn, I faced some issues. With ROS1, you could mention services in launch file. However, it's a bit tricky to run ROS2 services using launch command. In order to solve this challenge, I decided to make 2 new nodes called kill_turtle_node and spawn_turtle_node. These two nodes make sure that once turtlesim creates turtle1 topic, kill_turtle_node deletes turtle1 and spawn_turtle_node generated a new turtle and place it to an initial position. Once killing turtle1 and spawning a new turtle in the scene, it then initiates layered_exercise_node which then takes care of updating turtle's position and move the turtle in the scene.
 
-1.  Enable other processes to access the X11 server: 
-    ```
-    xhost local:root
-    ``` 
-2. Download and start the ROS noetic docker image: 
-    ```
-    docker run -it --rm  --env DISPLAY=$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:rw  osrf/ros:noetic-desktop-full
-    ``` 
-3. Install required dependencies: 
-    ```
-    sudo apt update && sudo apt install git-all python3-catkin-tools -y
-    ```
-4. Create a catkin workspace and build the exercise: 
-    ```
-   mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src && git clone https://github.com/LAYERED-pierrechass/layered_exercise.git && cd .. && catkin build && source devel/setup.bash
-   ```
-5. Launch the exercise:  
-   ```
-   roslaunch layered_exercise turtle.launch
-   ```
+Shown below is an rqt_graph of our new ROS2 package:
+![Alt Text](imgs/rqt_graph.png)
 
-> **DISCLAIMER:** This exercise was developed and tested using Ubuntu 24.04.1. It is recommended to use the same OS to make sure everything runs smoothly. However, because it runs inside a docker you should be able to run it on any platform by slightly adapting some of the instructions above. You can also use a docker, a dual boot or a VM to run Ubuntu 24.04.1. 
+As shown in figure above, our ROS2 based package has 4 nodes:
+1. turtlesim_node: Responsible for gui, placing initial turtle1 at a position. It subscribes to turtle/cmd_vel topic and publishes on turtle/pose topic.
+2. kill_turtle_node: A client based service which is implemented as a node. It kills turtle1 topic which was intially generated by default by turtlesim_node.
+3. spawn_turtle_node: A client based service which is implemented as a node. It creates turtle topic and place the new turtle into a new initial position.
+4. layered_exercise_node: This is where magic happens! Layered exercise subscribe to turtle/pose topic and use this information to calculate updated position and angular velocity of the turtle. It then publish this information to turtle/cmd_vel topic. 
 
-## Help
-If you need help for anything or have any question, please feel free to contact either Davide or Pierre. Asking for help will never be devalued. 
-- Pierre: pchassagne@ethz.ch
-- Davide: dbarret@ethz.ch
+Now that we understand how our new ROS2 based system works, let's see how we can run it:
 
-## Deadline
-If you are currently reading this it means that you have two days to complete the exercise and send us your submission.
+1. Asumption: Usage of Ubuntu based machine with xhost installed.
+2. In your terminal, first make sure if DISPLAY variable is setup using command ```echo $DISPLAY```. If it does not show anything, please set it up as follows:
+```
+export DISPLAY=:1
+``` 
+3. Enable root user (docker root in later stage) to access running X server to access display.
+```
+xhost local:root
+``` 
+4. Clone the github repository:
+```
+git clone https://github.com/rupalsaxena/layered_exercise.git
+```
+5. Run docker container using the command below:
+```
+docker run -it --rm --env DISPLAY=$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:rw --volume $(pwd):/root/colcon/src --name ros2_container osrf/ros:humble-desktop
+```
+6. Once you are inside docker, run the following command:
+```
+cd root/colcon && colcon build && source install/setup.bash
+```
+7. Launch the solution of exercise:
+```
+ros2 launch rosp_layered_exercise turtle.launch.py
+```
 
-## Submission
-Once you are done, you can send us, in the format you want (zip, github repos, ...), all the documents necessary to run your exercise. Note that we are using Ubuntu 24.04 and you can assume that we don't have anything installed on our machine.
+Once you run the launch file, you should be able to see a screen as shown below and a turtle moving and writing ROS.
 
-# LAYERED Coding Conventions
+![Alt Text](imgs/output.png)
 
-## General
-
-In general we are trying to follow the ROS2 coding style and conventions.
-
-As specified in the [Google Coding Style guide](https://google.github.io/styleguide/cppguide.html) names should be optimized for readability using names that would be clear even to people on a different team.
-
-We use a longer `line length` of 120.
-
-### Package naming
-
-All package should start with the prefix `rosp_`, which initially meant robotic on-site plastering, but is now kept for posterity.
-
-## C++
-
-ROS2 follows the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html). We do as well.
-
-### Exceptions
-
-**Function naming**: We use `mixedCase` for function naming. 
-
-## Python
-
-ROS2 follows the [PEP8 Style Guide](https://peps.python.org/pep-0008/). We do as well.
-
-### Exceptions
-
-**Function naming**: We use `mixedCase` for function naming.
-
-## Code documentation
-
-Documentation regarding details of implementation and repos should live inside the README.md of the repos. Code documentation should cover every non trivial technical aspects of the code as well as the workflow to use it. Make it as concise as possible, use diagrams and make it visual.
+Congratulations! You are successfully running layered_exercise using ROS2.
