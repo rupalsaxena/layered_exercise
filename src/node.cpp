@@ -49,14 +49,13 @@ private:
     double goal_theta = current_pose_.theta; //POINTS[point_index_][2]; // DISCUSS THIS
 
     geometry_msgs::msg::Twist cmd;
-    
 
     // Step 1: Align with goal
     double angle_to_goal = std::atan2(goal_y - current_pose_.y, goal_x - current_pose_.x);
     double angle_error = angle_to_goal - current_pose_.theta;
 
-    RCLCPP_INFO(this->get_logger(), "STEP 1 Angle to goal: %.2f, Current angle: %.2f, Angle error: %.2f", 
-            angle_to_goal, current_pose_.theta, angle_error);
+    // RCLCPP_INFO(this->get_logger(), "STEP 1 Angle to goal: %.2f, Current angle: %.2f, Angle error: %.2f", 
+    //         angle_to_goal, current_pose_.theta, angle_error);
 
     if (std::abs(angle_error) > 0.01) {
       cmd.angular.z = 10.0 * angle_error;
@@ -70,7 +69,7 @@ private:
     double distance = std::sqrt(dx * dx + dy * dy);
     double direction = std::atan2(dy, dx);
 
-    RCLCPP_INFO(this->get_logger(), "STEP 2 Distance to goal: %.2f, Current x: %.2f, Current y: %.2f", distance, current_pose_.x, current_pose_.y);
+    // RCLCPP_INFO(this->get_logger(), "STEP 2 Distance to goal: %.2f, Current x: %.2f, Current y: %.2f", distance, current_pose_.x, current_pose_.y);
 
     if (distance > 0.1) {
       cmd.linear.x = 2.0 * distance * std::cos(direction - current_pose_.theta);
@@ -80,7 +79,7 @@ private:
 
     // Step 3: Align with the goal orientation
     double theta_error = goal_theta - current_pose_.theta;
-    RCLCPP_INFO(this->get_logger(), "[Step 3] Aligning orientation. Theta error: %.2f", theta_error);
+    // RCLCPP_INFO(this->get_logger(), "[Step 3] Aligning orientation. Theta error: %.2f", theta_error);
 
     if (theta_error > M_PI)
         theta_error -= 2 * M_PI;
@@ -90,7 +89,7 @@ private:
     if (std::abs(theta_error) > 0.1) {
       cmd.angular.z = 2.0 * theta_error;
 
-      RCLCPP_INFO(this->get_logger(), "[Step 3] Publishing angular.z: %.2f", cmd.angular.z);
+      // RCLCPP_INFO(this->get_logger(), "[Step 3] Publishing angular.z: %.2f", cmd.angular.z);
       vel_pub_->publish(cmd);
       return;
     }

@@ -35,5 +35,4 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
-# ament package (MUST be last)
 ament_package()
