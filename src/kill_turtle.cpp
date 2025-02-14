@@ -5,13 +5,13 @@ class KillTurtleClient : public rclcpp::Node {
 public:
     KillTurtleClient() : Node("kill_turtle_client") {
         client_ = this->create_client<turtlesim::srv::Kill>("/kill");
-        call_kill_service("turtle1");
+        callKillService("turtle1");
     }
 
 private:
     rclcpp::Client<turtlesim::srv::Kill>::SharedPtr client_;
 
-    void call_kill_service(const std::string &turtle_name) {
+    void callKillService(const std::string &turtle_name) {
         auto request = std::make_shared<turtlesim::srv::Kill::Request>();
         request->name = turtle_name;
 

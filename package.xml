@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<package format="3">
-  <name>layered_exercise</name>
-  <version>0.0.0</version>
-  <description>The test package</description>
-  <maintainer email="layered@todo.todo">layered</maintainer>
+<package format="2">
+  <name>rosp_layered_exercise</name>
+  <version>0.0.1</version>
+  <description>Turtlesim Layered Package</description>
+  <maintainer email="rupal.saxena.rs@gmail.com">layered</maintainer>
   <license>Closed</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

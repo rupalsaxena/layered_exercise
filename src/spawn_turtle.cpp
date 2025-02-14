@@ -5,13 +5,13 @@ class SpawnTurtleClient : public rclcpp::Node {
 public:
     SpawnTurtleClient() : Node("spawn_turtle_client") {
         client_ = this->create_client<turtlesim::srv::Spawn>("/spawn");
-        call_spawn_service();
+        callSpawnService();
     }
 
 private:
     rclcpp::Client<turtlesim::srv::Spawn>::SharedPtr client_;
 
-    void call_spawn_service() {
+    void callSpawnService() {
         auto request = std::make_shared<turtlesim::srv::Spawn::Request>();
         request->x = 1.0;
         request->y = 1.0;
@@ -22,9 +22,10 @@ private:
         future.wait();
 
         if (future.get()) {
-            RCLCPP_INFO(this->get_logger(), "Successfully spawned turtle: new_turtle");
-        } else {
-            RCLCPP_ERROR(this->get_logger(), "Failed to spawn turtle");
+            RCLCPP_INFO(this->get_logger(), "Successfully spawned turtle :)");
+        } 
+        else {
+            RCLCPP_ERROR(this->get_logger(), "Failed to spawn turtle!!!!");
         }
     }
 };
