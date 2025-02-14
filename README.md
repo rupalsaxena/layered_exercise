@@ -13,7 +13,7 @@ During this migration, following are some changes which I did:
 During the migration, I faced several changes. Following are list of those:
 1. Visualizing ROS1 turtle with Macbook M1 chip looks quite straightforward but when it comes to visualizing with ROS2 based package, I faced some challenges. I spend quite some time on visualization of ROS2 package on my Macbook but nothing was succesful. Therefore, I switched to an Ubuntu based machine since Ubuntu is used by all Layered empolyees. On moving to Ubuntu, visualization worked immediately. HURRAYYY!
 
-2. Migration from rosservices to ROS2 services. On migrating from rosservices to ROS2 based services such as kill and spawn, I faced some issues. With ROS1, you could mention services in launch file. However, it's a bit tricky to run ROS2 services using launch command. In order to solve this challenge, I decided to make 2 new nodes called kill_turtle_node and spawn_turtle_node. These two nodes make sure that once turtlesim creates turtle1 topic, kill_turtle_node deletes turtle1 and spawn_turtle_node generated a new turtle and plave it to an initial position. Once killing turtle1 and spawning a new turtle in the scene, it then initiates layered_exercise_node which then takes care of updating turtle's position and move the turtle in the scene.
+2. Migration from rosservices to ROS2 services. On migrating from rosservices to ROS2 based services such as kill and spawn, I faced some issues. With ROS1, you could mention services in launch file. However, it's a bit tricky to run ROS2 services using launch command. In order to solve this challenge, I decided to make 2 new nodes called kill_turtle_node and spawn_turtle_node. These two nodes make sure that once turtlesim creates turtle1 topic, kill_turtle_node deletes turtle1 and spawn_turtle_node generated a new turtle and place it to an initial position. Once killing turtle1 and spawning a new turtle in the scene, it then initiates layered_exercise_node which then takes care of updating turtle's position and move the turtle in the scene.
 
 Shown below is an rqt_graph of our new ROS2 package:
 ![Alt Text](imgs/rqt_graph.png)
@@ -53,7 +53,7 @@ ros2 launch rosp_layered_exercise turtle.launch.py
 ```
 
 Once you run the launch file, you should be able to see a screen as shown below and a turtle moving and writing ROS.
+
 ![Alt Text](imgs/output.png)
 
-
-Phew! Now that we are done for this task, I can go back to my chess game again!
+Congratulations! You are successfully running layered_exercise using ROS2.

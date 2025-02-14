@@ -6,6 +6,20 @@
 #include <turtlesim/msg/pose.hpp>
 
 
+// Constants
+constexpr double ANGLE_TOLERANCE = 0.01;  // Tolerance for angle alignment
+constexpr double ANGULAR_GAIN = 10.0;  // Angular speed gain
+constexpr double DISTANCE_TOLERANCE = 0.1;  // Tolerance for reaching goal
+constexpr double LINEAR_GAIN = 2.0;  // Linear speed gain
+constexpr double THETA_TOLERANCE = 0.1;  // Tolerance for reaching goal
+constexpr double THETA_GAIN = 2.0;  // Linear speed gain
+
+const std::vector<std::vector<double>> POINTS = {
+  {1.0, 8.0}, {3.0, 8.0}, {3.0, 5.0}, {1.0, 5.0}, {3.0, 3.0}, {5.0, 3.0}, {5.0, 8.0}, {7.0, 8.0},
+  {7.0, 3.0}, {5.0, 3.0}, {9.0, 8.0}, {7.0, 8.0}, {7.0, 6.0}, {9.0, 6.0}, {9.0, 4.0}, {7.0, 4.0}
+}; // points for turtle to follow
+
+
 class TurtleController : public rclcpp::Node {
 public:
   TurtleController() : Node("turtle_controller") {
@@ -16,7 +30,7 @@ public:
         std::bind(&TurtleController::poseCallback, this, std::placeholders::_1));
 
     timer = this->create_wall_timer(
-        std::chrono::milliseconds(1), 
+        std::chrono::milliseconds(100), 
         std::bind(&TurtleController::controlLoop, this));
 
     RCLCPP_INFO(this->get_logger(), "Turtle Controller Node Initialized");
@@ -28,26 +42,22 @@ private:
   rclcpp::TimerBase::SharedPtr timer;
 
   turtlesim::msg::Pose current_pose;
-  size_t point_index_ = 0;
+  size_t point_index = 0;
 
-  const std::vector<std::vector<double>> POINTS = {
-    {1.0, 8.0}, {3.0, 8.0}, {3.0, 5.0}, {1.0, 5.0}, {3.0, 3.0}, {5.0, 3.0}, {5.0, 8.0}, {7.0, 8.0},
-    {7.0, 3.0}, {5.0, 3.0}, {9.0, 8.0}, {7.0, 8.0}, {7.0, 6.0}, {9.0, 6.0}, {9.0, 4.0}, {7.0, 4.0}
-  };
-
+  // Callback to receive ROS2 msgs
   void poseCallback(const turtlesim::msg::Pose::SharedPtr msg) {
     current_pose = *msg;
   }
 
   void controlLoop() {
-    if (point_index_ >= POINTS.size()) {
+    if (point_index >= POINTS.size()) {
       RCLCPP_INFO(this->get_logger(), "All points reached. Stopping.");
       rclcpp::shutdown();
       return;
     }
 
-    double goal_x = POINTS[point_index_][0];
-    double goal_y = POINTS[point_index_][1];
+    double goal_x = POINTS[point_index][0];
+    double goal_y = POINTS[point_index][1];
     double goal_theta = current_pose.theta; // DISCUSS THIS
 
     geometry_msgs::msg::Twist cmd;
@@ -59,8 +69,8 @@ private:
     RCLCPP_INFO(this->get_logger(), "Angle to goal: %.2f, Current angle: %.2f, Angle error: %.2f", angle_to_goal, 
     goal_theta, angle_error);
 
-    if (std::abs(angle_error) > 0.01) {
-      cmd.angular.z = 10.0 * angle_error;
+    if (std::abs(angle_error) > ANGLE_TOLERANCE) {
+      cmd.angular.z = ANGULAR_GAIN * angle_error;
       vel_pub->publish(cmd);
       return;
     }
@@ -74,8 +84,8 @@ private:
     RCLCPP_INFO(this->get_logger(), "Distance to goal: %.2f, Current x: %.2f, Current y: %.2f, Direction: %.2f", 
     distance, current_pose.x, current_pose.y, direction);
 
-    if (distance > 0.1) {
-      cmd.linear.x = 2.0 * distance * std::cos(direction - current_pose.theta);
+    if (distance > DISTANCE_TOLERANCE) {
+      cmd.linear.x = LINEAR_GAIN * distance * std::cos(direction - current_pose.theta);
       vel_pub->publish(cmd);
       return;
     }
@@ -89,15 +99,15 @@ private:
     if (theta_error < -M_PI)
       theta_error += 2 * M_PI;
 
-    if (std::abs(theta_error) > 0.1) {
-      cmd.angular.z = 2.0 * theta_error;
+    if (std::abs(theta_error) > THETA_TOLERANCE) {
+      cmd.angular.z = THETA_GAIN * theta_error;
 
       RCLCPP_INFO(this->get_logger(), "Publishing angular.z: %.2f", cmd.angular.z);
       vel_pub->publish(cmd);
       return;
     }
         
-    point_index_++;
+    point_index++;
   }
 };
 
